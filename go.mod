@@ -1,4 +1,4 @@
-module github.com/tj/go-termd
+module github.com/pookzilla/go-termd
 
 go 1.13
 
