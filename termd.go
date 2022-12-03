@@ -31,7 +31,11 @@ type Compiler struct {
 // Compile returns a terminal-styled plain text representation of a markdown string.
 func (c *Compiler) Compile(s string) string {
 	if c.Markdown == nil {
-		c.Markdown = blackfriday.New(blackfriday.WithExtensions(blackfriday.CommonExtensions))
+		c.Markdown = blackfriday.New(
+			blackfriday.WithExtensions(
+				blackfriday.CommonExtensions |
+				blackfriday.BackslashLineBreak |
+				blackfriday.HardLineBreak))
 	}
 
 	if c.Columns == 0 {
@@ -108,6 +112,12 @@ func (c *Compiler) visit(n *blackfriday.Node) (s string) {
 		s = fmt.Sprintf("\033[38;5;102m`%s`\033[m", string(n.Literal))
 	case blackfriday.HTMLSpan:
 		// ignore
+	case blackfriday.Hardbreak:
+		if c.inList {
+			s = "\n  "
+		} else {
+			s = "\n"
+		}
 	default:
 		s = fmt.Sprintf("<unhandled: %v>", n)
 	}
